@@ -260,6 +260,51 @@ async def view_level(ctx):
     await ctx.send(f'Your character is level {level}.')
 
 
+@bot.command()
+async def set_stat(ctx, stat_name, value: int):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    if 'stats' not in data[user_id]:
+        data[user_id]['stats'] = {}
+    data[user_id]['stats'][stat_name] = value
+    save_data(data)
+    await ctx.send(f'Stat {stat_name} set to {value}.')
+
+@bot.command()
+async def view_stats(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    stats = data[user_id].get('stats', {})
+    stats_message = '\n'.join(f'{stat}: {value}' for stat, value in stats.items())
+    await ctx.send(f'Stats:\n{stats_message}')
+@bot.command()
+async def start_quest(ctx, *, quest_name):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    if 'quests' not in data[user_id]:
+        data[user_id]['quests'] = []
+    if quest_name in data[user_id]['quests']:
+        await ctx.send('Quest already started.')
+        return
+    data[user_id]['quests'].append(quest_name)
+    save_data(data)
+    await ctx.send(f'Started quest: {quest_name}')
+
+@bot.command()
+async def view_quests(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    quests = data[user_id].get('quests', [])
+    quests_message = ', '.join(quests) if quests else 'No quests started.'
+    await ctx.send(f'Quests: {quests_message}')
 
 
 
