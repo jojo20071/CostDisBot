@@ -307,9 +307,51 @@ async def view_quests(ctx):
     await ctx.send(f'Quests: {quests_message}')
 
 
+@bot.command()
+async def learn_skill(ctx, *, skill_name):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    if 'skills' not in data[user_id]:
+        data[user_id]['skills'] = []
+    if skill_name in data[user_id]['skills']:
+        await ctx.send('Skill already learned.')
+        return
+    data[user_id]['skills'].append(skill_name)
+    save_data(data)
+    await ctx.send(f'Learned skill: {skill_name}')
+
+@bot.command()
+async def view_skills(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    skills = data[user_id].get('skills', [])
+    skills_message = ', '.join(skills) if skills else 'No skills learned.'
+    await ctx.send(f'Skills: {skills_message}')
 
 
 
+@bot.command()
+async def set_ability(ctx, *, ability_name):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    data[user_id]['special_ability'] = ability_name
+    save_data(data)
+    await ctx.send(f'Special ability set to: {ability_name}')
+
+@bot.command()
+async def view_ability(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    ability = data[user_id].get('special_ability', 'No special ability set.')
+    await ctx.send(f'Special Ability: {ability}')
 
 
 
