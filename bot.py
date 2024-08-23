@@ -354,9 +354,44 @@ async def view_ability(ctx):
     await ctx.send(f'Special Ability: {ability}')
 
 
+feedback_data = []
+
+@bot.command()
+async def give_feedback(ctx, *, feedback_text):
+    user_id = str(ctx.author.id)
+    feedback_data.append({'user_id': user_id, 'feedback': feedback_text})
+    await ctx.send('Thank you for your feedback!')
+
+@bot.command()
+async def view_feedback(ctx):
+    if not feedback_data:
+        await ctx.send('No feedback available.')
+        return
+    feedback_messages = '\n'.join(f'User {fb["user_id"]}: {fb["feedback"]}' for fb in feedback_data)
+    await ctx.send(f'Feedback:\n{feedback_messages}')
 
 
 
+@bot.command()
+async def reset_progress(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    
+    # Resetting specific parts of the character
+    data[user_id].pop('attribute', None)
+    data[user_id].pop('badges', None)
+    data[user_id].pop('inventory', None)
+    data[user_id].pop('achievements', None)
+    data[user_id].pop('quests', None)
+    data[user_id].pop('skills', None)
+    data[user_id].pop('special_ability', None)
+    data[user_id]['level'] = 1
+    data[user_id]['currency'] = 0
+
+    save_data(data)
+    await ctx.send('Character progress has been reset. Level and currency set to initial values.')
 
 
 
