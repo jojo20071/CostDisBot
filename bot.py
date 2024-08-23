@@ -216,4 +216,64 @@ async def view_background(ctx):
     background = data[user_id].get('background', 'No background set.')
     await ctx.send(f'Background: {background}')
 
+
+@bot.command()
+async def add_currency(ctx, amount: int):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    if 'currency' not in data[user_id]:
+        data[user_id]['currency'] = 0
+    data[user_id]['currency'] += amount
+    save_data(data)
+    await ctx.send(f'Added {amount} currency to your account.')
+
+@bot.command()
+async def view_currency(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    currency = data[user_id].get('currency', 0)
+    await ctx.send(f'Your current balance is {currency} currency.')
+
+@bot.command()
+async def level_up(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    if 'level' not in data[user_id]:
+        data[user_id]['level'] = 1
+    data[user_id]['level'] += 1
+    save_data(data)
+    await ctx.send(f'Your character is now level {data[user_id]["level"]}.')
+
+@bot.command()
+async def view_level(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    level = data[user_id].get('level', 1)
+    await ctx.send(f'Your character is level {level}.')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 bot.run('YOUR_BOT_TOKEN')
