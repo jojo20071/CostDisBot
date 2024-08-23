@@ -83,6 +83,52 @@ async def view_character(ctx):
     response = f'Name: {name}\nAttribute: {attribute}\nBadges: {badges}'
     await ctx.send(response)
 
+@bot.command()
+async def add_item(ctx, *, item_name):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    if 'inventory' not in data[user_id]:
+        data[user_id]['inventory'] = []
+    if item_name in data[user_id]['inventory']:
+        await ctx.send('Item already in inventory.')
+        return
+    data[user_id]['inventory'].append(item_name)
+    save_data(data)
+    await ctx.send(f'Item {item_name} added to your inventory.')
+
+@bot.command()
+async def view_inventory(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    inventory = ', '.join(data[user_id].get('inventory', []))
+    await ctx.send(f'Inventory: {inventory}')
+@bot.command()
+async def earn_achievement(ctx, *, achievement_name):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    if 'achievements' not in data[user_id]:
+        data[user_id]['achievements'] = []
+    if achievement_name in data[user_id]['achievements']:
+        await ctx.send('Achievement already earned.')
+        return
+    data[user_id]['achievements'].append(achievement_name)
+    save_data(data)
+    await ctx.send(f'Achievement {achievement_name} earned!')
+
+@bot.command()
+async def view_achievements(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    achievements = ', '.join(data[user_id].get('achievements', []))
+    await ctx.send(f'Achievements: {achievements}')
 
 
 
