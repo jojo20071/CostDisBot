@@ -131,9 +131,43 @@ async def view_achievements(ctx):
     await ctx.send(f'Achievements: {achievements}')
 
 
+@bot.command()
+async def leaderboard(ctx):
+    sorted_users = sorted(data.items(), key=lambda x: len(x[1].get('badges', [])), reverse=True)
+    leaderboard_msg = 'Leaderboard:\n'
+    for idx, (user_id, user_data) in enumerate(sorted_users[:10]):
+        user = await bot.fetch_user(int(user_id))
+        badges_count = len(user_data.get('badges', []))
+        leaderboard_msg += f'{idx + 1}. {user.name} - {badges_count} badges\n'
+    await ctx.send(leaderboard_msg)
+
+@bot.command()
+async def delete_character(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found.')
+        return
+    del data[user_id]
+    save_data(data)
+    await ctx.send('Character deleted.')
 
 
-
+@bot.command()
+async def help(ctx):
+    help_text = (
+        "!create_character <name> - Create a new character\n"
+        "!customize_character <attribute> - Customize your character\n"
+        "!add_badge <badge_name> - Add a badge to your character\n"
+        "!remove_badge <badge_name> - Remove a badge from your character\n"
+        "!view_character - View your character's details\n"
+        "!add_item <item_name> - Add an item to your inventory\n"
+        "!view_inventory - View your inventory\n"
+        "!earn_achievement <achievement_name> - Earn an achievement\n"
+        "!view_achievements - View your achievements\n"
+        "!leaderboard - View top users by badges\n"
+        "!delete_character - Delete your character\n"
+    )
+    await ctx.send(help_text)
 
 
 
