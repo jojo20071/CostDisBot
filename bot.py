@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import json
 import os
+import aiohttp
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -169,7 +170,50 @@ async def help(ctx):
     )
     await ctx.send(help_text)
 
+@bot.command()
+async def set_profile_picture(ctx, url):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data[user_id]['profile_picture'] = url
+                save_data(data)
+                await ctx.send('Profile picture updated.')
+            else:
+                await ctx.send('Failed to fetch image. Please check the URL.')
 
+@bot.command()
+async def view_profile_picture(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    profile_picture = data[user_id].get('profile_picture')
+    if profile_picture:
+        await ctx.send(profile_picture)
+    else:
+        await ctx.send('No profile picture set.')
 
+@bot.command()
+async def set_background(ctx, *, background_text):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    data[user_id]['background'] = background_text
+    save_data(data)
+    await ctx.send('Character background updated.')
+
+@bot.command()
+async def view_background(ctx):
+    user_id = str(ctx.author.id)
+    if user_id not in data:
+        await ctx.send('No character found. Use !create_character first.')
+        return
+    background = data[user_id].get('background', 'No background set.')
+    await ctx.send(f'Background: {background}')
 
 bot.run('YOUR_BOT_TOKEN')
