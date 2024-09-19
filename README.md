@@ -1,5 +1,7 @@
 # Discord Bot for Character Management
 
+invite: https://discord.com/oauth2/authorize?client_id=1286397892986273856&permissions=8&integration_type=0&scope=bot
+
 This Python script creates a Discord bot using `discord.py` that allows users to manage virtual characters within a server. Users can create, customize, and enhance their characters through a variety of commands, interacting with features like badges, items, achievements, and more. The bot also includes a leaderboard and feedback system to enhance community engagement.
 
 ### Features
